@@ -1,33 +1,25 @@
 # 研究领域关键词（用于LLM分类）
 keywords:
-  - "Large Language Models"
-  - "Natural Language Processing"
-  - "Vision Language Models"
-  - "Diffusion Models"
-  - "Multimodal"
-  - "Image Generation"
-  - "Video Generation"
-  - "Agent"
-  - "Distributed Computing"
   - "Operating Systems"
-  - "Information Retrieval"
-  - "Computer Vision"
-  - "Machine Learning"
+  - "Distributed Systems"
+  - "Container & Virtualization"
+  - "Cloud Native"
+  - "Real-Time Operating Systems"
+  - "Linux Kernel & System Development"
+  - "Graphics & GPU Systems"
+  - "System Architecture"
 
 # ArXiv API配置
 arxiv:
   max_results: 200
   base_url: "http://export.arxiv.org/api/query"
   categories:
-    - "cs.CV"
-    - "cs.CL"
-    - "cs.AI"
-    - "cs.LG"
-    - "cs.MM"
-    - "cs.DC"
-    - "cs.OS"
-    - "cs.IR"
-    - "cs.MA"
+    - "cs.OS"    # Operating Systems
+    - "cs.DC"    # Distributed, Parallel, and Cluster Computing
+    - "cs.AR"    # Hardware Architecture
+    - "cs.PF"    # Performance
+    - "cs.NI"    # Networking and Internet Architecture
+    - "cs.SE"    # Software Engineering
 
 # LLM配置
 llm:

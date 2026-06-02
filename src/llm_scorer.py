@@ -157,6 +157,12 @@ class LLMScorer:
     def _build_prompt(self, title: str, abstract: str, keywords: List[str]) -> str:
         keywords_str = ", ".join(keywords)
         return f"""Score, summarize, and categorize the following academic paper.
+
+IMPORTANT: This system focuses on systems-level research. Strongly prefer papers related to:
+operating systems, distributed systems, containers, virtualization, cloud native,
+real-time OS, Linux kernel/system development, graphics/GPU systems, and system architecture.
+Papers unrelated to these topics should receive a score below 50.
+
 You MUST reply with a single JSON object and absolutely nothing else — no markdown, no explanation, no text before or after.
 
 Title: {title}
@@ -168,11 +174,11 @@ Available categories: {keywords_str}
 Evaluate on four dimensions (0-25 each, be strict, most papers fall in 60-80):
 
 1. Novelty (0-25): 20-25 major breakthrough; 15-19 meaningful improvement; 10-14 incremental; 0-9 none.
-2. Utility (0-25): 20-25 high impact; 15-19 some potential; 10-14 limited; 0-9 impractical.
+2. Utility (0-25): 20-25 high impact on systems/infra; 15-19 some potential; 10-14 limited; 0-9 impractical.
 3. Rigor (0-25): 20-25 solid method & experiments; 15-19 adequate; 10-14 notable gaps; 0-9 flawed.
 4. Clarity (0-25): 20-25 clear & logical; 15-19 mostly clear; 10-14 mediocre; 0-9 hard to follow.
 
-Scoring guide: <85 for most papers; 60-80 for average; <60 for weak papers.
+Scoring guide: <85 for most papers; 60-80 for average; <60 for weak or off-topic papers.
 
 Total score = sum of four dimensions (0-100).
 

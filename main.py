@@ -354,9 +354,9 @@ class DailyPapers:
             pass
         
         return (
-            "# Daily Papers - AI精选论文\n\n"
+            "# Daily Papers - 系统与基础设施精选论文\n\n"
             "**自动抓取ArXiv论文，使用 Google Gemini 评分筛选高质量内容**\n\n"
-            "专为 **CV（计算机视觉）** 和 **LLM（大语言模型）** 研究者设计\n\n"
+            "专注于 **操作系统、分布式系统、容器/虚拟化、云原生、Linux内核、实时系统、图形/GPU系统** 研究\n\n"
             "## ✨ 特性\n\n"
             "- **🆓 完全免费** - 使用 Google AI Studio 免费 API\n"
             "- **🤖 自动运行** - GitHub Actions 每天自动运行\n"
