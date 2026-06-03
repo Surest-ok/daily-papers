@@ -158,10 +158,20 @@ class LLMScorer:
         keywords_str = ", ".join(keywords)
         return f"""Score, summarize, and categorize the following academic paper.
 
-IMPORTANT: This system focuses on systems-level research. Strongly prefer papers related to:
-operating systems, distributed systems, containers, virtualization, cloud native,
-real-time OS, Linux kernel/system development, graphics/GPU systems, and system architecture.
-Papers unrelated to these topics should receive a score below 50.
+FOCUS: This system ONLY covers low-level systems and infrastructure research. Acceptable topics:
+- Operating system theory: schedulers, memory management, IPC, syscalls, kernel mechanisms
+- File systems & storage: new FS designs, consistency models, SSD optimization, dedup
+- Containers & virtualization: Docker/Kube optimizations, lightweight VMs, sandboxing, unikernels
+- Cloud native: orchestration, service mesh, serverless, microservices, GitOps
+- eBPF & observability: tracing, profiling, monitoring, kernel probing, XDP
+- Networking: kernel bypass, RDMA, protocol design, network stack optimization, io_uring
+- Distributed systems: consensus protocols, distributed storage, coordination, CAP trade-offs
+- Real-time & embedded: RTOS, deterministic scheduling, automotive/industrial systems
+- Graphics/display systems: display servers, compositor frameworks, GPU driver stacks, DRM alternatives
+- Linux kernel: new subsystems, performance patches, kernel innovations
+
+REJECT: LLM/NLP, machine learning, AI, deep learning, computer vision, diffusion models, multimodal.
+Papers primarily about ML/AI must score BELOW 40 regardless of quality.
 
 You MUST reply with a single JSON object and absolutely nothing else — no markdown, no explanation, no text before or after.
 
@@ -178,7 +188,7 @@ Evaluate on four dimensions (0-25 each, be strict, most papers fall in 60-80):
 3. Rigor (0-25): 20-25 solid method & experiments; 15-19 adequate; 10-14 notable gaps; 0-9 flawed.
 4. Clarity (0-25): 20-25 clear & logical; 15-19 mostly clear; 10-14 mediocre; 0-9 hard to follow.
 
-Scoring guide: <85 for most papers; 60-80 for average; <60 for weak or off-topic papers.
+Scoring guide: <85 for most papers; 60-80 for average; <40 for off-topic (ML/AI) papers.
 
 Total score = sum of four dimensions (0-100).
 
