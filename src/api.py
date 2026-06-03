@@ -10,9 +10,9 @@ import feedparser
 from src.logger import logger
 from src.models import Paper
 
-ARXIV_REQUEST_TIMEOUT_SEC = 60
-ARXIV_MAX_RETRIES = 3
-ARXIV_RETRY_DELAY_429_SEC = 10
+ARXIV_REQUEST_TIMEOUT_SEC = 120
+ARXIV_MAX_RETRIES = 5
+ARXIV_RETRY_DELAY_429_SEC = 15
 ARXIV_RETRY_DELAY_NETWORK_SEC = 5
 
 
@@ -30,31 +30,43 @@ class ArxivClient:
         self.categories = categories or ["cs.CV", "cs.CL", "cs.AI", "cs.LG", "cs.MM"]
 
     def fetch_papers(self) -> List[Paper]:
-        """Fetch latest papers"""
-        query = " OR ".join([f"cat:{cat}" for cat in self.categories])
-        params = {
-            "search_query": query,
-            "max_results": self.max_results,
-            "sortBy": "submittedDate",
-            "sortOrder": "descending",
-        }
-        url = self.base_url + "?" + urllib.parse.urlencode(params)
+        """Fetch latest papers by querying each category separately and merging."""
+        per_cat = max(self.max_results // len(self.categories), 50)
+        all_papers: List[Paper] = []
+        seen_ids: set = set()
 
-        logger.info(f"Fetching latest {self.max_results} papers from cs categories...")
+        for i, cat in enumerate(self.categories):
+            params = {
+                "search_query": f"cat:{cat}",
+                "max_results": per_cat,
+                "sortBy": "submittedDate",
+                "sortOrder": "descending",
+            }
+            url = self.base_url + "?" + urllib.parse.urlencode(params)
+            logger.info(f"Fetching category {cat} ({i + 1}/{len(self.categories)}), up to {per_cat} papers...")
 
-        body = self._fetch_feed_body(url)
+            body = self._fetch_feed_body(url)
 
-        feed = feedparser.parse(body)
-        if getattr(feed, "bozo", False) and feed.bozo_exception:
-            logger.warning(f"ArXiv feed parse warning: {feed.bozo_exception}")
+            feed = feedparser.parse(body)
+            if getattr(feed, "bozo", False) and feed.bozo_exception:
+                logger.warning(f"ArXiv feed parse warning for {cat}: {feed.bozo_exception}")
 
-        papers: List[Paper] = []
-        for entry in feed.entries:
-            paper = self._parse_entry(entry)
-            papers.append(paper)
+            count = 0
+            for entry in feed.entries:
+                paper = self._parse_entry(entry)
+                paper_id = paper.link.strip()
+                if paper_id not in seen_ids:
+                    seen_ids.add(paper_id)
+                    all_papers.append(paper)
+                    count += 1
 
-        logger.info(f"Fetched {len(papers)} papers")
-        return papers
+            logger.info(f"  {cat}: got {count} new papers (total unique: {len(all_papers)})")
+
+            if i < len(self.categories) - 1:
+                time.sleep(3)
+
+        logger.info(f"Fetched {len(all_papers)} unique papers across {len(self.categories)} categories")
+        return all_papers
 
     def _fetch_feed_body(self, url: str) -> str:
         """Fetch ArXiv feed with retry on rate limit and transient network errors."""
