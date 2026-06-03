@@ -46,6 +46,9 @@ class ArxivClient:
             logger.info(f"Fetching category {cat} ({i + 1}/{len(self.categories)}), up to {per_cat} papers...")
 
             body = self._fetch_feed_body(url)
+            if body is None:
+                logger.warning(f"Skipping category {cat} due to fetch failure")
+                continue
 
             feed = feedparser.parse(body)
             if getattr(feed, "bozo", False) and feed.bozo_exception:
@@ -68,37 +71,37 @@ class ArxivClient:
         logger.info(f"Fetched {len(all_papers)} unique papers across {len(self.categories)} categories")
         return all_papers
 
-    def _fetch_feed_body(self, url: str) -> str:
-        """Fetch ArXiv feed with retry on rate limit and transient network errors."""
+    def _fetch_feed_body(self, url: str) -> Optional[str]:
+        """Fetch ArXiv feed with retry. Returns None on persistent failure."""
         for attempt in range(1, ARXIV_MAX_RETRIES + 1):
             try:
                 with urllib.request.urlopen(url, timeout=ARXIV_REQUEST_TIMEOUT_SEC) as resp:
                     return resp.read().decode("utf-8")
             except urllib.error.HTTPError as e:
-                if e.code == 429 and attempt < ARXIV_MAX_RETRIES:
-                    retry_after = e.headers.get("Retry-After")
-                    sleep_sec = self._parse_retry_after(retry_after, ARXIV_RETRY_DELAY_429_SEC)
+                if e.code in (429, 503) and attempt < ARXIV_MAX_RETRIES:
+                    sleep_sec = ARXIV_RETRY_DELAY_429_SEC
                     logger.warning(
-                        f"ArXiv rate limited (429), sleeping {sleep_sec}s "
+                        f"ArXiv {e.code} {e.reason}, sleeping {sleep_sec}s "
                         f"before retry {attempt + 1}/{ARXIV_MAX_RETRIES}"
                     )
                     time.sleep(sleep_sec)
                     continue
                 logger.error(f"ArXiv HTTP error: {e.code} {e.reason}")
-                raise
-            except urllib.error.URLError as e:
+                return None
+            except (urllib.error.URLError, TimeoutError, OSError) as e:
                 if attempt < ARXIV_MAX_RETRIES:
                     logger.warning(
-                        f"ArXiv network error: {e.reason}, sleeping "
+                        f"ArXiv network error: {e}, sleeping "
                         f"{ARXIV_RETRY_DELAY_NETWORK_SEC}s before retry "
                         f"{attempt + 1}/{ARXIV_MAX_RETRIES}"
                     )
                     time.sleep(ARXIV_RETRY_DELAY_NETWORK_SEC)
                     continue
-                logger.error(f"ArXiv network error: {e.reason}")
-                raise
+                logger.error(f"ArXiv network error: {e}")
+                return None
 
-        raise RuntimeError("ArXiv fetch retries exhausted")
+        logger.error("ArXiv fetch retries exhausted")
+        return None
 
     def _parse_entry(self, entry: dict) -> Paper:
         """Parse paper entry"""
