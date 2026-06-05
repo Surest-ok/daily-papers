@@ -1,15 +1,13 @@
 # 研究领域关键词（用于LLM分类）
 keywords:
-  - "Operating Systems & Scheduling"
+  - "OS Kernel & Scheduling"
   - "File Systems & Storage"
   - "Container & Virtualization"
-  - "Cloud Native & Orchestration"
+  - "Cloud Native Infrastructure"
   - "eBPF & Observability"
-  - "Networking & Protocol"
-  - "Distributed Systems & Consensus"
-  - "Real-Time & Embedded Systems"
-  - "Graphics & Display Systems"
-  - "Linux Kernel Development"
+  - "Network Stack & Protocol"
+  - "Middleware & Runtime"
+  - "Distributed Systems"
 
 # ArXiv API配置
 arxiv:
@@ -20,9 +18,7 @@ arxiv:
     - "cs.DC"    # Distributed, Parallel, and Cluster Computing
     - "cs.NI"    # Networking and Internet Architecture
     - "cs.PF"    # Performance
-    - "cs.AR"    # Hardware Architecture
     - "cs.SE"    # Software Engineering
-    - "cs.GR"    # Graphics
 
 # LLM配置
 llm:

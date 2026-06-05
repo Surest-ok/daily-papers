@@ -354,9 +354,9 @@ class DailyPapers:
             pass
         
         return (
-            "# Daily Papers - 系统与底层技术精选论文\n\n"
-            "**自动抓取ArXiv论文，使用 Google Gemini 评分筛选高质量内容**\n\n"
-            "专注于 **操作系统、调度器、文件系统、容器/虚拟化、云原生、eBPF可观测性、网络协议栈、分布式系统、实时系统、图形显示系统、Linux内核** 等底层系统研究\n\n"
+            "# Daily Papers - 系统工程与基础设施精选论文\n\n"
+            "**自动抓取ArXiv论文，使用 Google Gemini 评分筛选可落地的工程化论文**\n\n"
+            "专注于 **OS内核、文件系统、容器/虚拟化、云原生基础设施、eBPF可观测性、网络协议栈、中间件与运行时、分布式系统** 等可直接落地验证的工程化研究\n\n"
             "## ✨ 特性\n\n"
             "- **🆓 完全免费** - 使用 Google AI Studio 免费 API\n"
             "- **🤖 自动运行** - GitHub Actions 每天自动运行\n"

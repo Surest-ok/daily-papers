@@ -158,20 +158,27 @@ class LLMScorer:
         keywords_str = ", ".join(keywords)
         return f"""Score, summarize, and categorize the following academic paper.
 
-FOCUS: This system ONLY covers low-level systems and infrastructure research. Acceptable topics:
-- Operating system theory: schedulers, memory management, IPC, syscalls, kernel mechanisms
-- File systems & storage: new FS designs, consistency models, SSD optimization, dedup
-- Containers & virtualization: Docker/Kube optimizations, lightweight VMs, sandboxing, unikernels
-- Cloud native: orchestration, service mesh, serverless, microservices, GitOps
-- eBPF & observability: tracing, profiling, monitoring, kernel probing, XDP
-- Networking: kernel bypass, RDMA, protocol design, network stack optimization, io_uring
-- Distributed systems: consensus protocols, distributed storage, coordination, CAP trade-offs
-- Real-time & embedded: RTOS, deterministic scheduling, automotive/industrial systems
-- Graphics/display systems: display servers, compositor frameworks, GPU driver stacks, DRM alternatives
-- Linux kernel: new subsystems, performance patches, kernel innovations
+FOCUS: This system ONLY covers practical, engineering-oriented systems and infrastructure research.
+Papers must propose solutions that can be directly implemented, deployed, and verified in production.
+Purely theoretical, simulation-only, or ML/AI-first papers are NOT wanted.
 
-REJECT: LLM/NLP, machine learning, AI, deep learning, computer vision, diffusion models, multimodal.
-Papers primarily about ML/AI must score BELOW 40 regardless of quality.
+ACCEPTABLE topics (must have real implementation or prototype):
+- OS kernel: schedulers (CFS/EEVDF alternatives), memory management, syscalls, IPC, io_uring, cgroups
+- File systems & storage: new FS designs, consistency models, SSD/NVMe optimization, block layer
+- Containers & virtualization: runtime (containerd/CRI-O), image optimization, lightweight VMs, Firecracker, sandboxing, unikernels
+- Cloud native infrastructure: Kubernetes scheduling, service mesh (Envoy/Istio), serverless cold-start, GitOps, CNCF projects
+- eBPF & observability: tracing (BCC/bpftrace), XDP, kernel probing, Cilium, profiling, monitoring pipelines
+- Network stack: kernel bypass (DPDK/SPDK), RDMA, TCP optimization, protocol design, QUIC, zero-copy
+- Middleware & runtime: message queues, RPC frameworks, database engines, caching layers, runtime optimization (JVM/V8/WASM)
+- Distributed systems: consensus (Raft/Paxos), distributed storage, coordination, replication, sharding
+
+BONUS: Papers with open-source code, benchmarks on real hardware, or production deployment data get +5 Utility.
+
+REJECT and score BELOW 30:
+- LLM/NLP/ML/AI/DL training or inference optimization
+- Computer vision, diffusion models, multimodal
+- Pure theory with no implementation
+- ML applied to systems but ML is the core contribution
 
 You MUST reply with a single JSON object and absolutely nothing else — no markdown, no explanation, no text before or after.
 
@@ -184,11 +191,11 @@ Available categories: {keywords_str}
 Evaluate on four dimensions (0-25 each, be strict, most papers fall in 60-80):
 
 1. Novelty (0-25): 20-25 major breakthrough; 15-19 meaningful improvement; 10-14 incremental; 0-9 none.
-2. Utility (0-25): 20-25 high impact on systems/infra; 15-19 some potential; 10-14 limited; 0-9 impractical.
-3. Rigor (0-25): 20-25 solid method & experiments; 15-19 adequate; 10-14 notable gaps; 0-9 flawed.
-4. Clarity (0-25): 20-25 clear & logical; 15-19 mostly clear; 10-14 mediocre; 0-9 hard to follow.
+2. Utility (0-25): 20-25 directly deployable in production; 15-19 needs minor adaptation; 10-14 prototype only; 0-9 impractical.
+3. Rigor (0-25): 20-25 real system evaluation; 15-19 prototype with benchmarks; 10-14 microbenchmarks only; 0-9 no evaluation.
+4. Clarity (0-25): 20-25 clear & reproducible; 15-19 mostly clear; 10-14 mediocre; 0-9 hard to follow.
 
-Scoring guide: <85 for most papers; 60-80 for average; <40 for off-topic (ML/AI) papers.
+Scoring guide: <85 for most papers; 60-80 for average; <30 for off-topic (ML/AI/theory-only) papers.
 
 Total score = sum of four dimensions (0-100).
 
