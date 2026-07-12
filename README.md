@@ -30,11 +30,5 @@
 
 <!-- PAPERS_START -->
 
-## 2026-07-12
-
-## Middleware & Runtime
-
-| 标题 | 评分 | Gemini 摘要 | 评分理由 | 原始摘要 |
-|------|------|-------------|----------|----------|
-| **[On the Correctness of Software Merge](https://arxiv.org/abs/2607.07987v1)** | ⭐ 78/100 | 提出基于范畴论的结构化代码合并工具 | 通过语法标准提升合并正确性，实验评估详实且具有工程价值。 | <details><summary>展开</summary>Three-way merge tools play crucial roles in modern software development, where a developer forks a branch to make local modifications and requests it to be merged into the main branch via a "pull request." Despite its importance, the task has traditionally been defined in an intuitive manner, and the results of merge tools are often accepted without scrutiny. In this paper, we present a new structural merge tool in comparison with existing tools based on the syntactic criteria we propose for evaluating the merge results. We require the merge result to be both parsable and universal. Being parsable means that the result is syntactically valid according to the grammar of the programming language. Being universal means that the result incorporates all and only the edit operations occurring in each branch while ensuring that edits common to both branches are applied only once. This requirement can be precisely defined using the notion of pushouts in category theory. In a large-scale experiment involving 43,774 file merge scenarios from 76 open-source Java projects, we found a number of incorrect results reported by existing tools such as the Git companion merge tool, whereas our tool reports none. We further compared d3j's results with 2,582 developer-resolved merges and with 2,459 merge scenarios involving 21 refactoring types. These experiments revealed both the strengths and current limitations of structural merge, and underscore the importance of clear correctness criteria. We expect that the proposed criterion will provide a foundation for developing more reliable and principled merge tools.</details> |
+## 2026-07-13
 
